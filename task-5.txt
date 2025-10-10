@@ -1,4 +1,106 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No: 250541059
+AD-SOYAD: Çağan Ahmet Erdoğan 
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+BM Genel Kurulu Karar Alma Sürecine Dair Diyalog
+Kullanıcı: Birleşmiş Milletler Genel Kurulunda kararlar nasıl alınıyor? Hem süreci açıkla hem de bana bir karar verme algoritması ver.
+Yapay Zeka: Memnuniyetle. BM Genel Kurulu'ndaki temel kural: Her üye devletin bir oy hakkı vardır ve alınan kararların çoğu sadece tavsiye niteliğindedir (Güvenlik Konseyi'nin aksine, hukuken bağlayıcı değildirler).
+Karar alma süreci, oylanan konunun önemine göre iki ana çoğunluk türüne ayrılır:
+• Önemli Sorunlar (Barış, güvenlik, bütçe, yeni üye kabulü) için: Mevcut ve Oy Kullananların üçte iki (2/3) çoğunluğu gerekir.
+• Diğer Sorunlar için: Mevcut ve Oy Kullananların salt çoğunluğu (1/2+1) yeterlidir.
+Kullanıcı: Peki "Mevcut ve Oy Kullananlar" ne anlama geliyor? Çekimserler sayılıyor mu?
+Yapay Zeka: Hayır, çekimser kalanlar çoğunluk hesaplamasına dahil edilmez. Sadece "Evet" ve "Hayır" oyu kullananların toplam sayısı esas alınır.
+Kullanıcı: Bu matematiksel kısmı. Sürecin daha karmaşık, yani diplomatik veya taktiksel yönlerini de yansıtan ek özellikler var mı? Algoritmayı zenginleştirelim.
+Yapay Zeka: Kesinlikle var. Bu, süreci daha gerçekçi hale getirir:
+• Konsensüs Önceliği: En sık kullanılan yöntemdir. Eğer taslağa hiçbir üye devlet resmen itiraz etmezse, oylama yapılmadan karar görüş birliğiyle kabul edilir.
+• Mali Onay Zorunluluğu: Eğer karar bütçeyi veya üyeleri mali açıdan etkiliyorsa, oylanmadan önce bütçe komiteleri tarafından onaylanması (Mali Yükümlülük Kontrolü) gerekir.
+• Bölünmüş Oylama: Taktiksel bir adımdır. Bir üye, kararın hassas bir maddesinin metnin kalanından ayrı oylanmasını talep edebilir. Reddedilen kısım metinden çıkarılır, kalan metin bütün olarak tekrar oylanır.
+• Çoğunluk Değiştirme Yetkisi: Genel Kurul, bir "Diğer Sorun"un bile salt çoğunluk oyuyla 2/3 çoğunlukla oylanmasına karar verme yetkisine sahiptir.
+Kullanıcı: Anladım. Bu, yalnızca oylama değil, aynı zamanda müzakere ve strateji meselesi. Son, entegre algoritmanın özeti nasıl olur?
+Yapay Zeka: Entegre süreç, bir sözde kod mantığıyla şöyle işler:
+• Başlangıç: Konsensüs var mı diye bakılır. Varsa kabul edilir.
+• Mali Kontrol: Maliyet varsa bütçe onayı aranır.
+• Çoğunluk Belirleme: Konunun türüne göre (Önemli/Diğer) çoğunluk (2/3 veya Salt) belirlenir. Gerekirse bu çoğunluk türü de oylanarak değiştirilebilir.
+• Taktik Oylama: Bölünmüş oylama talepleri işlenir.
+• Nihai Oylama: "Evet" oylarının toplamı, "Mevcut ve Oy Kullananlar" sayısına göre belirlenen gerekli eşiğe ulaşırsa karar Kabul Edilir (Tavsiye olarak).
+• Sonuç Etkisi: Barış ve güvenlik kararları, BM Güvenlik Konseyi'ne resmi olarak bildirilir.
+
+Birleşmiş Milletler Genel Kurulu Karar Alma Algoritması (Sözde Kod)
+FONKSİYON BM_GENEL_KURULU_KARAR_ALMA(Taslak_Rezolüsyon)
+
+    // AŞAMA 1: DİPLOMATİK ÇÖZÜM (KONSENSÜS) ÖNCELİĞİ
+    
+    EĞER Taslak_Rezolüsyon.Konsensüs_Müzakereleri_BaşarılıYSA:
+        // EK ÖZELLİK 1: Görüş Birliği
+        EĞER HİÇBİR_ÜYE_DEVLET_İTİRAZ_ETMEDİYSE:
+            SONUÇ = "KABUL EDİLDİ (GÖRÜŞ BİRLİĞİYLE)"
+            DÖN SONUÇ
+        SON
+    
+    // EK ÖZELLİK 2: MALİ YÜKÜMLÜLÜK KONTROLÜ
+    
+    EĞER Taslak_Rezolüsyon.Mali_Yükümlülük_İçeriyorSA:
+        RAPOR = SEKRETERLİK.Maliyet_Hesapla(Taslak_Rezolüsyon)
+        EĞER RAPOR.Bütçe_Komitesi.Onay_AlınmadıYSA:
+            SONUÇ = "REDDEDİLDİ (Mali Kısıtlamalar/Bütçe Onayı Eksikliği)"
+            DÖN SONUÇ
+        SON
+            
+    // AŞAMA 2: GEREKLİ ÇOĞUNLUK TÜRÜNÜ BELİRLEME
+    
+    EĞER Taslak_Rezolüsyon.Konu_Türü EŞİTTİR "Önemli Sorun" VEYA Taslak_Rezolüsyon.Konu_Türü EŞİTTİR "Bütçe Konusu":
+        GEREKLİ_ÇOĞUNLUK = ÜÇTE_İKİ_ÇOĞUNLUK  // (Mevcut ve Oy Kullananların 2/3'ü)
+    DEĞİLSE:
+        // EK ÖZELLİK 3: Çoğunluk Türünü Değiştirme Yetkisi
+        EĞER OYLA("Salt Çoğunluktan 2/3'e Çevirme Teklifi", SALT_ÇOĞUNLUK) EŞİTTİR "Kabul":
+            GEREKLİ_ÇOĞUNLUK = ÜÇTE_İKİ_ÇOĞUNLUK
+        DEĞİLSE:
+            GEREKLİ_ÇOĞUNLUK = SALT_ÇOĞUNLUK // (Mevcut ve Oy Kullananların 1/2 + 1)
+        SON
+    SON
+    
+    // AŞAMA 3: OYLAMA SÜRECİ VE TAKTİK MANEVRALAR
+    
+    // EK ÖZELLİK 4: Bölünmüş Oylama (Vote-Splitting) Kontrolü
+    EĞER Talep_Var("Bölünmüş Oylama"):
+        Taslak_Rezolüsyon.Maddeleri.HER_BİRİ_İÇİN:
+            EĞER OYLA(Kısım, GEREKLİ_ÇOĞUNLUK) EŞİTTİR "REDDEDİLDİ":
+                Kısım.Metinden_Çıkar = DOĞRU // Reddedilen kısımlar çıkarılır
+            SON
+        TASLAK_REZOLÜSYON = Taslak_Rezolüsyon.Kalan_Maddeleri_Birleştir()
+    SON
+    
+    // NİHAİ METİN ÜZERİNDE OYLAMA
+    
+    OY_TOPLAMI = 0
+    OY_KULLANANLAR_TOPLAMI = 0
+    
+    ÜYE_DEVLETLER.HER_BİRİ_İÇİN:
+        OY = ÜYE_DEVLET.Oy_Kullan() // ("Evet", "Hayır", "Çekimser")
+        
+        EĞER OY EŞİTTİR "Evet":
+            OY_TOPLAMI = OY_TOPLAMI + 1
+            OY_KULLANANLAR_TOPLAMI = OY_KULLANANLAR_TOPLAMI + 1
+        DEĞİLSE EĞER OY EŞİTTİR "Hayır":
+            OY_KULLANANLAR_TOPLAMI = OY_KULLANANLAR_TOPLAMI + 1
+        // "Çekimser" oylar, OY_KULLANANLAR_TOPLAMI'na dahil edilmez.
+    SON
+    
+    // Gerekli Eşik Sayısını Hesapla
+    GEREKEN_SAYI = Gerekli_Çoğunluk_Hesapla(GEREKLİ_ÇOĞUNLUK, OY_KULLANANLAR_TOPLAMI)
+    
+    // AŞAMA 4: NİHAİ SONUÇ VE ETKİSİ
+    
+    EĞER OY_TOPLAMI BÜYÜKTÜR_VEYA_EŞİTTİR GEREKEN_SAYI:
+        SONUÇ = "KABUL EDİLDİ (Tavsiye Niteliğinde)"
+    DEĞİLSE:
+        SONUÇ = "REDDEDİLDİ"
+    
+    // EK ÖZELLİK 5: Güvenlik Konseyi İstişaresi
+    EĞER Taslak_Rezolüsyon.Konu_Türü EŞİTTİR "Barış ve Güvenlik":
+        BMGK.Bilgilendir("Genel Kurul Kararı (Tavsiye)")
+        
+    DÖN SONUÇ
+    
+SON_FONKSİYON
+
