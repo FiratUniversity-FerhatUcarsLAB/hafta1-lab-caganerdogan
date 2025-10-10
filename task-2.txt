@@ -1,4 +1,144 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250541059
+AD-SOYAD: Çağan Ahmet Erdoğan
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+
+UNO Algoritması Projesi Özet (Kopyalanabilir Transkript)
+Kullanıcı: Uno oyununu en hızlı yoldan kazanmak için oluşturulan bir algoritmamın sözde kodlarını paylaş. Algoritmayı geliştirmek için önerilerine açığım.
+
+Yazılım Uzmanı: Harika bir meydan okuma! En hızlı kazanma, minimum hamle sayısı ile kartları bitirmeyi hedefler. Bu amaçla, önceliklendirmeye dayalı Greedy (Açgözlü) bir algoritma yapısı önerdim ve ilk sözde kod taslağını sundum. Taslakta; Kazanma Önceliği, Rakibi Engelleme ve İstenmeyen Kartlardan Kurtulma başlıkları altında temel puanlama mantığı yer aldı.
+
+Yazılım Uzmanı: Algoritmayı daha "akıllı" hale getirmek için 3 geliştirme önerisi sundum:
+• Kart Sayma ve Stok Tahmini: Oynanan kartları takip etme.
+• Risk Yönetimi ve UNO Durumu: Son kart olarak Vahşi +4 atma riskini yönetme.
+• Aksiyon Kartlarını Biriktirme Stratejisi: İki aynı aksiyon kartını (örn. +2) zincirleme atma potansiyelini değerlendirme.
+
+Kullanıcı: Fikirlerin hepsini entegre et ve algoritmanın son halinin sözde kodlarını benimle paylaş.
+
+Yazılım Uzmanı: Tüm stratejik geliştirme fikirlerinin (Kart Sayma, UNO Risk Yönetimi, Aksiyon Kartlarını Biriktirme) entegre edildiği NİHAİ VE OPTİMİZE SÖZDE KOD yapısını sundum. Bu yapı, EN_İYİ_VAHŞİ_RENK_SEÇİMİ ve ana EnIyiHamleyiSec fonksiyonlarında şu mantığı uyguladı:
+• Kazanma anında +4'e karşı güvenli kartları önceliklendirme.
+• Zincirleme Aksiyon kartlarına ekstra puan verme.
+• Rakip kazanmaya yaklaştığında (3 kart veya altı), onu zorlayacak rengi Vahşi kartlarla seçme.
+• Blöf riskini hesaplayarak Vahşi +4 kartının puanını dinamik olarak ayarlama.
+
+Kullanıcı: Bitir.
+
+Yazılım Uzmanı: Projenin başarıyla tamamlandığını onayladım ve algoritmanın nihai yeteneklerini (Stratejik Karar Verme, Risk Yönetimi, Dinamik Saldırı/Savunma) özetledim.
+
+1. Güncellenmiş Veri Yapıları
+
+# Temsili Renkler ve Türler (Aynı Kaldı)
+# ...
+
+# Oyun Durumu (Güncellendi)
+OYUN_DURUMU = {
+    "AktifKart": KART,
+    "El": KART_DİZİSİ,
+    "RakipKartSayilari": {OYUNCU_ID: int},
+    "OyunYonu": string,
+    "OynananKartlar": {RENK: {TÜR: int}}, // Her renk ve türden oynanan kart sayısı
+    "ToplamKartSayisi": {RENK: int},      // Stokta kalan tahmini kart sayısı
+    "SonKartCekmeDurumu": boolean         // Oyuncu bu turda kart çekti mi?
+}
+
+2. Kritik Alt Fonksiyonlar
+2.1. Vahşi Kart Renk Seçimi (Optimal Renk Belirleme)
+
+FONKSİYON EN_İYİ_VAHŞİ_RENK_SEÇİMİ(DURUM: OYUN_DURUMU): RENK
+
+    // 1. Kendi Elindeki En Yoğun Rengi Bul (Savunma/Devamlılık)
+    Kendi_Renk_Frekansı = HESAPLA_RENK_FREKANSLARI(DURUM.El)
+    Aday_Renk = Kendi_Renk_Frekansı.EnYüksek(VAHŞİ hariç)
+
+    // 2. Rakip Analizi (Saldırı)
+    SIRADAKİ_RAKİP_ID = RAKİBİ_BUL(DURUM)
+    SIRADAKİ_RAKİP_KartSayisi = DURUM.RakipKartSayilari[SIRADAKİ_RAKİP_ID]
+
+    EĞER SIRADAKİ_RAKİP_KartSayisi <= 3:
+        // Rakip kazanmaya yakınsa, elindeki en az bulunan renge geçerek onu zorla
+        Rakip_Zorluk_Rengi = TAHMİNİ_RAKİBİN_EN_AZ_SAHİP_OLDUĞU_RENK(DURUM.OynananKartlar)
+        
+        EĞER Kendi_Renk_Frekansı[Aday_Renk] >= 2:
+             // Elinde en az 2 kartın varsa, kendi rengine devam et (güvenli)
+            GERİ DÖN Aday_Renk
+        DEĞİLSE:
+            // Kendi rengin zayıfsa, rakibi en çok zorlayacak renge geç
+            GERİ DÖN Rakip_Zorluk_Rengi
+
+    GERİ DÖN Aday_Renk // Normal durumda kendi en yoğun rengine dön
+
+3. En İyi Hamle Seçimi (Öncelik Tabanlı Puanlama)
+
+FONKSİYON EnIyiHamleyiSec(DURUM: OYUN_DURUMU): KART veya "KART_ÇEK"
+
+    OynanabilirKartlar = Filtrele(DURUM.El, DURUM.AktifKart)
+    EĞER OynanabilirKartlar BOŞ İSE: GERİ DÖN "KART_ÇEK"
+    
+    Hamle_Listesi = Boş Liste
+
+    HER KART OynanabilirKartlar İÇİN:
+        Puan = 0
+
+        // 1. KAZANMA ÖNCELİĞİ (Kart Sayısı = 1)
+        EĞER DURUM.El.Boyut == 2:
+            // Kazanmaya bir adım kala, en güvenli kartı at.
+            EĞER KART.TÜR != VAHŞİ_+4:
+                Puan += 1000 // Yüksek puan, güvenli kazanma yolu
+            DEĞİLSE:
+                // VAHŞİ +4 risklidir (Meydan Okuma), sadece mecbursa at
+                Puan += 700 
+        
+        // 2. AKSİYON KARTLARINI BİRLEŞTİRME VE RAKİP ENGELLEME
+        SIRADAKİ_RAKİP_KartSayisi = DURUM.RakipKartSayilari.SIRADAKİ_OYUNCU
+        
+        EĞER KART.TÜR == +2 VEYA KART.TÜR == PAS:
+            EĞER SIRADAKİ_RAKİP_KartSayisi <= 3:
+                Puan += 350 // Rakip kazanmaya yakınsa cezalandır/engelle
+
+            EĞER AynıTürdeBirKartDahaVar(DURUM.El, KART.TÜR):
+                Puan += 200 // Zincirleme reaksiyon potansiyeli (örneğin: İki +2)
+
+        EĞER KART.TÜR == VAHŞİ_+4:
+            // Yüksek risk, yüksek ödül. Yüksek puan ama risk yönetimi altta.
+            Puan += 400 
+            // VAHŞİ +4 blöf riski yönetimi: Elinde aynı renk/sayı oynanabilir kart varsa cezalandır.
+            EĞER BaşkaOynanabilirKartVar(DURUM.El, DURUM.AktifKart):
+                 Puan -= 100 // Blöf yapma puanını düşür.
+
+        EĞER KART.TÜR == TERS:
+            // Ters kartı ile sıranın hemen tekrar bize gelme durumunu değerlendir.
+            EĞER SIRADAKİ_RAKİP_KartSayisi <= 3 VEYA DURUM.OyunYonu == "GERİ":
+                 Puan += 150 
+                 
+        // 3. KART STOĞUNU BOZMA VE RENK DEĞİŞTİRME ÖNCELİĞİ
+        EĞER KART.TÜR == VAHŞİ:
+             Puan += 100 // Her zaman güçlü, puanı sayı kartından yüksek tut
+             
+        EĞER KART.TÜR == SAYI:
+            // Eldeki en çok bulunan renkteki SAYI kartlarını tutmaya çalış.
+            KendiRenkFrekansı = DURUM.El.AynıRenkSayısı(KART.Renk)
+            Puan -= KendiRenkFrekansı * 10 // En az bulunan rengi atmayı teşvik et.
+
+        // 4. SON ÇARE (Son çareyi mümkün olduğunca geciktir)
+        EĞER DURUM.SonKartCekmeDurumu == DOĞRU:
+            // Yeni çektiğin kartı atma isteği (Puanı biraz artır)
+            Puan += 20
+
+        Hamle_Listesi.Ekle((Puan, KART))
+
+    // EN YÜKSEK PUANLI KARTI SEÇ
+    Hamle_Listesi.Sırala(Puan, Azalan)
+    SeçilenKart = Hamle_Listesi[0].KART
+    
+    // Vahşi Kart Renk Ayarı
+    EĞER SeçilenKart.TÜR == VAHŞİ VEYA SeçilenKart.TÜR == VAHŞİ_+4:
+        SeçilenKart.SeçilenRenk = EN_İYİ_VAHŞİ_RENK_SEÇİMİ(DURUM)
+
+    GERİ DÖN SeçilenKart
+
+
+
+
+
+
+
