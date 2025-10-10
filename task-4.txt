@@ -1,4 +1,96 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No: 250541059
+AD-SOYAD: Çağan Ahmet Erdoğan 
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+
+Böl ve Yönet Pastası: Fikir Alışverişi Diyaloğu
+Kullanıcı: 20 kişinin katıldığı bir doğum günü partisinde bir doğum günü pastasını böl ve yönet algoritmasıyla nasıl paylaştırırsın?
+Gemini: Bu yaratıcı bir yaklaşım! Böl ve Yönet algoritmasıyla pastayı adil paylaştırmak için problemi sürekli ikiye bölmeliyiz:
+• Bölme (Divide): 20 kişiyi 10+10 olarak iki gruba ayırırız. Pastayı da 21​ ve 21​ olarak böleriz. Bu işlemi, gruplar 2 veya 3 kişiye inene kadar tekrarlarız.
+• Yönetme (Conquer): En küçük gruplarda N=2 için "Sen Kes, Ben Seç" yöntemini uygularız.
+• Birleştirme (Combine): Tüm küçük parçaların adil paylaşımını birleştirerek sonuca ulaşırız. Herkes kendi gözünde en az 1/20 pay almış olur.
+Kullanıcı: Bu algoritmaya eklemek istediğin bir özellik var mı?
+Gemini: Evet, paylaşımın sadece orantılı (proportional) değil, aynı zamanda kıskançlık içermeyen (envy-free) olmasına yaklaşmak için bir özellik ekleyebiliriz:
+• Düzeltme (Trimming) Mekanizması: 3 kişilik gruplarda, kesilen parçalardan herhangi birini diğer oyuncular kendi paylarından büyük görürse, o fazlalığı (kırıntıyı) kesip ayırır. Bu, kıskançlığı en aza indirmeye yardımcı olur.
+Kullanıcı: Bu önerilerini entegre et ve son algoritmanın sözde kodlarını benimle paylaş.
+Gemini: Önerileri entegre ettim ve sözde kodu hazırladım:
+• Ana Fonksiyon: Pastayı yinelemeli olarak N≤3 olana kadar bölen yapıdır.
+• Adil Paylaşım Fonksiyonu (N=2): Klasik "Sen Kes, Ben Seç" kuralını içerir.
+• Adil Paylaşım Fonksiyonu (N=3): Kıskançlığı en aza indiren Düzeltme Mekanizmasını ve stratejik seçim sırasını içerir.
+(Bu noktada uzun sözde kod parçacıkları paylaşıldı.)
+
+I. Ana Fonksiyon: Pastayı Yinelemeli Bölme
+FONKSİYON Böl_ve_Yönet_Pasta_Paylaşımı (KişiListesi, PastaDilimi):
+    N = KişiListesi'nin Uzunluğu
+
+    // TEMEL DURUM (Base Case): Grubun büyüklüğü 3 veya daha azsa adil paylaşım uygula
+    EĞER N <= 3 İSE:
+        GERİ DÖN Adil_Paylaşım_Uygula(KişiListesi, PastaDilimi)
+
+    // BÖLME (Divide): Listeyi ve pastayı yaklaşık eşit iki parçaya böl
+    
+    // 1. Listeyi Böl
+    N1 = Tavan(N / 2) // İlk grubun büyüklüğü (örn: 20 -> 10)
+    N2 = N - N1      // İkinci grubun büyüklüğü (örn: 20 -> 10)
+    Grup1 = KişiListesi'nin ilk N1 elemanı
+    Grup2 = KişiListesi'nin kalan N2 elemanı
+    
+    // 2. Pastayı Böl
+    // Kesici: Pastayı kendi gözünde N1/N ve N2/N oranlarında iki eşit değerli parçaya böler.
+    Kesici = KişiListesi'ndeki rastgele bir kişi
+    Dilim1, Dilim2 = Kesici'nin_Oranlara_Uygun_Kestiği_Parçalar(PastaDilimi, N1, N2) 
+
+    // YÖNETME (Conquer): Alt problemleri özyinelemeli (recursive) olarak çöz
+    Sonuç1 = Böl_ve_Yönet_Pasta_Paylaşımı(Grup1, Dilim1)
+    Sonuç2 = Böl_ve_Yönet_Pasta_Paylaşımı(Grup2, Dilim2)
+
+    // BİRLEŞTİRME (Combine): Sonuçları birleştir (Zaten birleşmiş olarak dönerler)
+    GERİ DÖN Sonuç1 + Sonuç2
+
+II. Temel Durum Fonksiyonu: Kıskançlığı Azaltan Adil Paylaşım
+FONKSİYON Adil_Paylaşım_Uygula (KişiListesi, PastaDilimi):
+    N = KişiListesi'nin Uzunluğu
+    
+    EĞER N = 1 İSE:
+        GERİ DÖN { KişiListesi[0]: PastaDilimi }
+
+    EĞER N = 2 İSE:
+        // Klasik Kıskançlık İçermeyen Yöntem: "Sen Kes, Ben Seç"
+        Kesici = KişiListesi[0]
+        Seçici = KişiListesi[1]
+        
+        Parça1, Parça2 = Kesici'nin_Eşit_Kestiği_Parçalar(PastaDilimi)
+        
+        Seçicinin_Payı = Seçici'nin_Daha_Büyük_Gördüğü_Parça(Parça1, Parça2)
+        Kesicinin_Payı = Kalan_Parça()
+        
+        GERİ DÖN { Seçici: Seçicinin_Payı, Kesici: Kesicinin_Payı }
+
+    EĞER N = 3 İSE:
+        // Kıskançlık Azaltıcı Yöntem: "Kesme ve Düzeltme (Trimming)"
+        
+        KişiA, KişiB, KişiC = KişiListesi
+        Kırıntı_Listesi = Boş_Liste()
+        
+        // 1. Kesme
+        KişiA, Pastayı_Kendi_Gözünde_Üç_Eşit_Parçaya_Böler: P1, P2, P3 
+        
+        // 2. Düzeltme (Trimming)
+        // Kişi B veya C, P1, P2 veya P3'ten kendi gözünde 1/3'ten büyük olanı düzeltir
+        En_Büyük_Parça = KişiB_ve_KişiC'nin_En_Değerli_Gördüğü_Parça() 
+        
+        EĞER En_Büyük_Parça, bir kişi tarafından 1/3'ten Büyük Görülüyorsa:
+            Düzeltici = O_Kişi
+            Kırıntı = Düzeltici'nin_Düzeltme_Kestiği_Kısım(En_Büyük_Parça)
+            Kırıntı_Listesi'ne_Ekle(Kırınt)
+            En_Büyük_Parça = En_Büyük_Parça - Kırınt
+
+        // 3. Seçim Sırası (Kıskançlık minimizasyonu için stratejik sıra)
+        KişiC, Kalan_Parçalar_Arasından_En_Değerliyi_Seçer()
+        KişiB, Kalan_Parçalar_Arasından_En_Değerliyi_Seçer()
+        KişiA, Son_Kalan_Parçayı_Alır()
+
+        // 4. Kırıntıların Yönetimi: (Parti sahibine/doğum günü çocuğuna ya da rastgele birine verilir)
+        KişiA'nın_Payına_Kırıntıları_Ekle()
+        
+        GERİ DÖN { KişiA: Payı, KişiB: Payı, KişiC: Payı }
