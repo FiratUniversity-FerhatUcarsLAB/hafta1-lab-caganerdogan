@@ -1,0 +1,211 @@
+Öğrenci No: 250541059
+AD-SOYAD: Çağan Ahmet Erdoğan
+
+Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+
+Kullanıcı: 
+
+Günümüzde müzik albümlerine kolayca erişilebiliyor. Bu albümleri türlerine göre ayırabilecek bir uygulamanın algoritmasını ve sözde kodunu oluşturmanı istiyorum.
+
+Gemini: 
+
+Harika bir fikir! Temel algoritmayı oluşturduk. Özellik Çıkarımı (Tempo, MFCC) ve ardından Makine Öğrenimi Sınıflandırması ile her şarkıya tür atayıp albüm için çoğunluk kararı almayı önerdim.
+
+Kullanıcı:
+
+Bu algoritmayı geliştirmek için bir önerin var mı?
+
+Gemini:
+
+Evet, hem doğruluğu hem de esnekliği artırmalıyız. Hibrit Sınıflandırma (Meta veri + Ses analizi) ve Derin Öğrenme ile Kromatik Vektörler gibi gelişmiş özellikler kullanmayı önerdim. Ayrıca, tek tür yerine çoklu etiketleme (Top-3) yapmalıyız.
+
+Kullanıcı: 
+
+Bu önerilerini algoritmaya entegre et.
+
+Gemini:
+
+Entregre ettik! Artık algoritma, daha doğru sonuçlar için ses analizine %60, meta verilere %40 ağırlık veriyor ve en olası üç türü döndürüyor.
+
+Kullanıcı:
+
+Ayrıca uygulama, haftanın yeni çıkan albümlerini Pitchfork, Rolling Stone gibi eleştirmenlerin verdiği puanlara göre sıralasın ve sunsun.
+
+Gemini:
+
+Ekledik! Yeni Sıralama Modülü, farklı kaynak puanlarını toplayıp normalize ederek ve kaynak otoritesine göre ağırlıklandırarak haftalık en iyi albümleri sıralıyor.
+
+Kullanıcı:
+
+Uygulama ayrıca müzik türlerini (tarih, neden, toplumsal etki) ve önemli sanatçılarını da tanıtsın.
+
+Gemini:
+
+Oluşturuldu! Bir Statik Bilgi Veri Tabanı Modülü ekleyerek, türlerin tarihçesini ve kültürel etkilerini kullanıcıya detaylıca sunmayı sağladık.
+
+Kullanıcı:
+
+Ve son olarak, uygulama müzik aletlerini de tanıtsın. Aletin kullanıldığı şarkıları versin ve şarkı kredilerinde kullanılan aletleri göstersin.
+
+Gemini:
+
+Bu da tamam! Alet Kataloğu ve Genişletilmiş Krediler Modülü eklendi. Artık şarkı kredilerinde Vokalist, Yazar ve Prodüktörler vurgulanıyor ve kullanılan enstrüman isimlerine tıklanarak aletin tanıtım sayfasına gidilebiliyor.
+
+Kullanıcı:
+
+Tüm bu istediklerimi karşılayan bir algoritma oluştur ve sözde kodlarını benimle paylaş.
+
+Gemini:
+
+Tüm bu modülleri ve fonksiyonları içeren Kapsamlı Müzik Keşif Uygulaması Algoritması sözde kodlarını dört ana modül halinde sundum.
+
+Ana Akış: Kullanıcı Albüm/Şarkı Aradığında
+
+FONKSİYON AnaUygulamaAkisi(KULLANICI_GİRİSİ)
+
+    // A. Girişi tanımla ve Dinamik Veriyi Çek
+    EĞER KULLANICI_GİRİSİ "Haftalık Liste" İSE:
+        SONUÇ_LİSTESİ = HaftalıkAlbümSırala(YeniCikanAlbümler)
+        SUNUM_TİPİ = "Sıralanmış Liste"
+    
+    EĞER KULLANICI_GİRİSİ "Albüm Detay" İSE:
+        ALBÜM = AlbümVerisiniCek(ALBÜM_ID)
+        
+        // 1. Tür Sınıflandırmasını Uygula
+        ALBÜM.TürEtiketleri = HibritAlbümTürüSınıflandır(ALBÜM) 
+        
+        // 2. Kredileri Getir
+        ŞARKI_KREDİLERİ = ŞarkıKredileriniGörüntüle(ALBÜM) 
+
+        SONUÇ_LİSTESİ = [ALBÜM, ŞARKI_KREDİLERİ]
+        SUNUM_TİPİ = "Detay Sayfası"
+
+    // B. Statik Bilgi Talebi (Tarihçe ve Alet)
+    EĞER KULLANICI_GİRİSİ "Tür Tarihçesi" İSE:
+        SONUÇ_LİSTESİ = TürTarihçesiGörüntüle(TÜR_ADI)
+        SUNUM_TİPİ = "Tarihçe Sayfası"
+
+    EĞER KULLANICI_GİRİSİ "Alet Kataloğu" İSE:
+        SONUÇ_LİSTESİ = AletKataloğuGörüntüle(ALET_ADI)
+        SUNUM_TİPİ = "Alet Sayfası"
+
+    // C. Nihai Sonucu Görüntüle
+    ArayüzdeSun(SONUÇ_LİSTESİ, SUNUM_TİPİ)
+
+SON FONKSİYON
+
+Modül 1: Hibrit Tür Sınıflandırma (Gelişmiş)
+
+FONKSİYON HibritAlbümTürüSınıflandır(ALBÜM)
+    // Ağırlıklar: Ses: %60, Meta Veri: %40
+    AGIRLIK_SES = 0.60 
+    AGIRLIK_META = 0.40
+
+    TÜR_NİHAİ_PUANLARI = YeniSözlük()
+    
+    // Adım 1: Meta Veri Puanları
+    META_ETİKETLER = HariciVeritabanindanEtiketCek(ALBÜM)
+    HER ETİKET İÇİN META_ETİKETLER:
+        TÜR_NİHAİ_PUANLARI[ETİKET] += (1.0 * AGIRLIK_META)
+
+    // Adım 2: Ses Analizi Puanları
+    SARKİ_BAŞINA_PUAN = AGIRLIK_SES / ALBÜM.SarkiSayisi
+    HER ŞARKI İÇİN ALBÜMDE:
+        // Gelişmiş Özellik Çıkarımı: Tempo, Kromatik Vektörler, MFCC
+        ÖZELLİK_VEKTÖRÜ = ÖzellikCikar(ŞARKI) 
+
+        // Derin Öğrenme Sınıflandırması (Olasılık Dağılımı)
+        OLASILIK_DAĞILIMI = CNN_Modeli_ile_OlasilikTahminEt(ÖZELLİK_VEKTÖRÜ) 
+
+        HER TÜR İÇİN OLASILIK_DAĞILIMI:
+            EKLENECEK_PUAN = OLASILIK_DAĞILIMI[TÜR] * SARKİ_BAŞINA_PUAN
+            TÜR_NİHAİ_PUANLARI[TÜR] += EKLENECEK_PUAN
+
+    // Adım 3: Çoklu Etiketleme Kararı (Top 3)
+    SIRALANMIŞ_TÜRLER = TÜR_NİHAİ_PUANLARI.PuanaGöreSirala(Azalan) 
+    DÖNDÜR SIRALANMIŞ_TÜRLER.İlkNeyiAl(3)
+
+SON FONKSİYON
+
+Modül 2: Eleştirmen Puanlarına Dayalı Sıralama
+
+FONKSİYON HaftalıkAlbümSırala(GÜNCEL_ALBÜM_LİSTESİ)
+
+    BU_HAFTANIN_LİSTESİ = TariheGöreFiltrele(GÜNCEL_ALBÜM_LİSTESİ, "Son 7 Gün")
+    
+    HER ALBÜM İÇİN BU_HAFTANIN_LİSTESİ:
+        
+        TOPLAM_AGIRLIK = 0.0
+        TOPLAM_PUAN = 0.0
+        
+        İNCELEMELER = VeritabanındanİncelemeleriCek(ALBÜM)
+        
+        HER İNCELEME İÇİN İNCELEMELER:
+            // Puan Normalizasyonu (Örn: 100 üzerinden)
+            NORMALLEŞTİRİLMİŞ_PUAN = Puanı100ÜzerindenNormalleştir(İNCELEME.Puan, İNCELEME.Kaynak)
+            
+            // Güvenirlik Ağırlığı (Örn: Pitchfork: 1.0, Rolling Stone: 0.85)
+            KAYNAK_AGIRLIĞI = GüvenirlikAğırlığıAl(İNCELEME.Kaynak)
+            
+            TOPLAM_PUAN += (NORMALLEŞTİRİLMİŞ_PUAN * KAYNAK_AGIRLIĞI)
+            TOPLAM_AGIRLIK += KAYNAK_AGIRLIĞI
+            
+        // Nihai Ortalamayı Hesapla
+        ALBÜM.SiralamaPuani = EĞER TOPLAM_AGIRLIK > 0.0 İSE (TOPLAM_PUAN / TOPLAM_AGIRLIK) DEĞİLSE 0.0
+        
+        // Sınıflandırma bilgisini ekle
+        ALBÜM.TürEtiketleri = HibritAlbümTürüSınıflandır(ALBÜM)
+
+
+    // Listeyi Puana Göre Sırala ve Türlere Göre Grupla
+    SIRALANMIŞ_ALBÜMLER = BU_HAFTANIN_LİSTESİ.PuanaGöreSirala(Azalan)
+
+    DÖNDÜR SIRALANMIŞ_ALBÜMLER
+
+SON FONKSİYON
+
+Modül 3: Statik Bilgi Getirme (Tarihçe ve Alet)
+
+FONKSİYON TürTarihçesiGörüntüle(SECİLEN_TÜR_ADI)
+    TÜR_KAYDI = VeriTabanindanTürCek(SECİLEN_TÜR_ADI)
+    
+    // Gerekli verileri (Tarih, Sebep, Toplumsal Etki, Öncü Sanatçılar) çek ve Görüntüle
+    DÖNDÜR TÜR_KAYDI 
+
+SON FONKSİYON
+
+FONKSİYON AletKataloğuGörüntüle(SECİLEN_ALET_ADI)
+    ALET_KAYDI = AletVeriTabanindanCek(SECİLEN_ALET_ADI)
+    İLİŞKİLİ_ŞARKILAR = ŞarkıİlişkilendirmeVeriTabanindanCek(SECİLEN_ALET_ADI)
+    
+    // Alet Tanıtımı, Tarihçesi ve İlişkili Şarkıları Görüntüle
+    DÖNDÜR [ALET_KAYDI, İLİŞKİLİ_ŞARKILAR]
+
+SON FONKSİYON
+
+Modül 4: Krediler ve Bağlantı Modülü
+
+FONKSİYON ŞarkıKredileriniGörüntüle(ALBÜM)
+
+    HER ŞARKI İÇİN ALBÜMDE:
+        KREDİLER_LİSTESİ = KredilerVeriTabanindanCek(ŞARKI.ID)
+
+        // Rollere Göre Gruplama
+        VOKALİSTLER = KredileriFiltrele(KREDİLER_LİSTESİ, "Vokal")
+        YAZARLAR = KredileriFiltrele(KREDİLER_LİSTESİ, "Yazar")
+        PRODÜKTÖRLER = KredileriFiltrele(KREDİLER_LİSTESİ, "Prodüktör")
+        MÜZİSYENLER = KredileriFiltrele(KREDİLER_LİSTESİ, "Müzisyen/Alet")
+
+        // Müzisyen Kredilerini Alet Tanıtım Modülüne Bağlama
+        HER MÜZİSYEN_KREDİSİ İÇİN MÜZİSYENLER:
+            ALET_ADI = MÜZİSYEN_KREDİSİ.KullanılanAlet
+            // Eğer alet için statik bilgi mevcutsa, Arayüzde TIKLANABİLİR_BAĞLANTI oluştur.
+            MÜZİSYEN_KREDİSİ.Bağlantı = AletTanıtımıMevcut(ALET_ADI) 
+
+        ŞARKI.Krediler = [VOKALİSTLER, YAZARLAR, PRODÜKTÖRLER, MÜZİSYENLER]
+
+    DÖNDÜR ALBÜM.Şarkılar.Krediler
+
+SON FONKSİYON
+
+
