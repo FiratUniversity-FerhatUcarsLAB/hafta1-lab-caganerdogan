@@ -1,4 +1,164 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No: 250541059
+AD-SOYAD: Çağan Ahmet Erdoğan 
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+
+Proje Transkripti
+1. Başlangıç ve İlk İhtiyaç Analizi
+Kullanıcı: Türkiye'de üniversite sınavına (YKS) hazırlanan öğrenciler için MEB müfredatını temel alarak seviyeye uygun günlük, haftalık ve yıllık çalışma programları hazırlayan; deneme sonuçlarını analiz edip programda değişiklik yapan bir uygulama için sözde kod oluşturmanı istiyorum. Farklı fikirlerin varsa tartışmaya açığım.
+Yazılım Uzmanı: Elbette. Uygulamanın mimarisini (Veri Katmanı, Kullanıcı Modeli, Algoritma Çekirdeği) belirleyerek bir sözde kod taslağı oluşturabilirim. Sözde Kod Taslağı: YKS_MÜFREDAT, ÖĞRENCİ_PROFİLİ veri yapılarını ve ProgramOluştur, ProgramıGüncelle (Deneme Analizi) fonksiyonlarını içeren ilk yapıyı sundu. Tartışma Önerileri: 1) Mikro-Öğrenme ve Oyunlaştırma, 2) Bilişsel Yük Yönetimi (Koruyucu Tekrarlar), 3) Dinamik Zamanlama ve Blokaj Yönetimi fikirlerini tartışmaya açtı.
+2. İhtiyaç Genişletme ve Gelişmiş Özelliklerin Entegrasyonu
+Kullanıcı: Veri katmanına YDT müfredatını ekle. Koruyucu tekrar ve dinamik zamanlama fikirlerini uygulamaya entegre et ve sözde kodun son ve tam halini benimle paylaş.
+Yazılım Uzmanı: Gereksinimleri kabul etti. YDT müfredatını, Koruyucu Tekrar algoritmasını (SonTekrarTarihleri), ve Dinamik Zamanlama mekanizmasını (Gerçekleşen_Uyum_Oranı) entegre eden NİHAİ SÖZDE KOD TASLAĞI'nı sundu. Yeni Kod Yapısı: analiz_ve_profil_guncelle ve haftalık_program_olustur fonksiyonlarında %70 Eksiklik ve %30 Tekrar dengesini, uyum oranına göre kapasite ayarlamasını ve YDT konularını içerdi.
+3. Tam Kod Talebi ve Uygulama Çatısı Sunumu
+Kullanıcı: Bunlar snippet, bana tam kodu ver.
+Yazılım Uzmanı: Sözde kodun mantığını somutlaştıran, Python dilinde yazılmış, yapısal olarak tam bir kod örneği sundu. Python Uygulaması: OgrenciProfili, Gorev sınıfları ile analiz_ve_profil_guncelle ve haftalik_program_olustur fonksiyonlarının gerçek Python kodlarını ve bir simülasyon akışını sundu.
+4. Kapanış
+Kullanıcı: Bitir.
+Yazılım Uzmanı: Projenin başarıyla tamamlandığını onayladı ve ana entegre özellikleri (Kişiselleştirme, Koruyucu Tekrar, Dinamik Zamanlama) özetledi. Projenin sonraki adımları olarak Veritabanı Entegrasyonu ve Hata Tipi Analizi önerilerini sundu. 
+
+1. Veri Yapıları ve Sınıflar
+# MEB Müfredatı ve Konu Ağırlıkları (TYT, AYT, YDT Dahil)
+YKS_MÜFREDAT = {
+    "Matematik_TYT": {"Ağırlık": 0.4, "OptimalTekrarAralığı": 10}, # Gün
+    "Türkçe_AnlatımBozukluğu": {"Ağırlık": 0.1, "OptimalTekrarAralığı": 5},
+    "YDT_Dilbilgisi": {"Ağırlık": 0.5, "OptimalTekrarAralığı": 7},
+    # ... tüm diğer alt konular
+}
+
+# Öğrenci Profil Bilgileri
+ÖĞRENCİ_PROFİLİ = {
+    "ID": int,
+    "HedefPuan": int,
+    "KonuYeterlilikleri": { # 0.0 (zayıf) - 1.0 (mükemmel)
+        "Matematik_TYT": float,
+    },
+    "ÇalışmaKapasitesi_MODELİ": { # Temel Kapasite
+        "HaftalıkMaksimum_saat": int
+    },
+    "Gerçekleşen_Uyum_Oranı": float, # Dinamik Zamanlama için (Son hafta performansı)
+    "SonTekrarTarihleri": { # Koruyucu Tekrar için
+        "Matematik_TYT": date,
+    }
+}
+
+# Program Görev Yapısı
+GÖREV = {
+    "Konu": string,
+    "Tür": string, # (Konu Öğrenme, Soru Çözümü, Deneme, Koruyucu Tekrar)
+    "TahminiSüre_dk": int,
+    "Öncelik": string, # (KRİTİK_Eksik, DENGE_Tekrar)
+    "Tamamlandı": boolean
+}
+
+# Haftalık Program Planı
+PROGRAM_PLANI = {
+    "Tür": "Haftalık",
+    "BaşlangıçTarihi": date,
+    "GünlükGörevler": { # Dağıtılmış görevler
+        "Pazartesi": [GÖREV, GÖREV, ...],
+        # ... diğer günler
+    }
+}
+
+2. Algoritma Çekirdeği Fonksiyonları
+
+2.1. Deneme Analizi ve Profil Güncelleme Fonksiyonu
+
+FONKSİYON ProgramıGüncelle_AnalizEt(Öğrenci: ÖĞRENCİ_PROFİLİ, DenemeCevapları: DIZİ, TamamlananGörevler: DIZİ): ÖĞRENCİ_PROFİLİ
+
+    # 1. Konu Yeterliliklerini Güncelle (Ağırlıklı Ortalama)
+    YENİ_YETERLİLİKLER = Öğrenci.KonuYeterlilikleri.Kopya()
+
+    HER KONU, BAŞARI_ORANI DenemeCevapları İÇİN:
+        # Yeni başarı (0.3 ağırlık) ve eski yeterlilik (0.7 ağırlık) ile harmanla
+        YENİ_YETERLİLİKLER[Konu] = (0.7 * YENİ_YETERLİLİKLER[Konu]) + (0.3 * BAŞARI_ORANI)
+
+    Öğrenci.KonuYeterlilikleri = YENİ_YETERLİLİKLER
+    
+    # 2. Dinamik Zamanlama için Uyum Oranını Hesapla
+    Planlanan_Sure_dk = Öğrenci.ÇalışmaKapasitesi_MODELİ.HaftalıkMaksimum_saat * 60
+    Tamamlanan_Sure_dk = Topla(TamamlananGörevler.TahminiSüre_dk)
+
+    EĞER Planlanan_Sure_dk > 0:
+        Uyum_Oranı = MİN(1.0, Tamamlanan_Sure_dk / Planlanan_Sure_dk)
+        # Pürüzsüzleştirme: Öğrencinin uyum oranını kademeli olarak değiştir
+        Öğrenci.Gerçekleşen_Uyum_Oranı = (0.5 * Öğrenci.Gerçekleşen_Uyum_Oranı) + (0.5 * Uyum_Oranı)
+
+    GERİ DÖN ÖĞRENCİ
+
+2.2. Akıllı Haftalık Program Oluşturma Fonksiyonu
+FONKSİYON HaftalıkProgramOluştur(Öğrenci: ÖĞRENCİ_PROFİLİ, Müfredat: YKS_MÜFREDAT): PROGRAM_PLANI
+
+    PLAN_GÖREVLERİ = Boş Liste
+    
+    # 1. Dinamik Çalışma Kapasitesini Belirle
+    Ayarlanmış_Kapasite_Saat = Öğrenci.ÇalışmaKapasitesi_MODELİ.HaftalıkMaksimum_saat * Öğrenci.Gerçekleşen_Uyum_Oranı
+    Kalan_Çalışma_Süresi_dk = Ayarlanmış_Kapasite_Saat * 60
+
+    # 2. KRİTİK EKSİK Konulara Odaklan (Toplam Sürenin %70'i)
+    Eksiklik_Öncelik_Listesi = Sırala_EksiklikAğırlığı(Öğrenci.KonuYeterlilikleri, Müfredat)
+    Hedef_Eksiklik_Süresi_dk = Kalan_Çalışma_Süresi_dk * 0.7 
+    
+    Kalan_Çalışma_Süresi_dk -= Hedef_Eksiklik_Süresi_dk # Geriye kalan %30'u tekrar için ayır
+
+    HER KONU, YETERLİLİK Eksiklik_Öncelik_Listesi İÇİN:
+        # Yeterlilik düşerse, gereken süre artsın
+        Gereken_Süre_dk = HESAPLA_SÜRE_BAZ_YETERLİLİK(1.0 - YETERLİLİK) 
+        
+        EĞER Hedef_Eksiklik_Süresi_dk >= Gereken_Süre_dk:
+            GÖREV = Yeni GÖREV(Konu: KONU, Tür: Soru Çözümü, Süre: Gereken_Süre_dk, Öncelik: KRİTİK_Eksik)
+            PLAN_GÖREVLERİ.Ekle(GÖREV)
+            Hedef_Eksiklik_Süresi_dk -= Gereken_Süre_dk
+
+    # 3. KORUYUCU TEKRAR Görevlerini Ekle (Kalan Süre)
+    HER KONU, SON_TEKRAR Öğrenci.SonTekrarTarihleri İÇİN:
+        Optimal_Aralık = Müfredat[KONU].OptimalTekrarAralığı
+        GünFarkı = BUGÜN - SON_TEKRAR
+        
+        EĞER GünFarkı > Optimal_Aralık:
+            # Gecikme arttıkça tekrar süresini artır (Unutma Eğrisi Modelini Simüle Et)
+            Tekrar_Süresi_dk = HESAPLA_TEKRAR_SÜRESİ(GünFarkı, Optimal_Aralık) 
+
+            EĞER Kalan_Çalışma_Süresi_dk >= Tekrar_Süresi_dk:
+                GÖREV = Yeni GÖREV(Konu: KONU, Tür: Koruyucu Tekrar, Süre: Tekrar_Süresi_dk, Öncelik: DENGE_Tekrar)
+                PLAN_GÖREVLERİ.Ekle(GÖREV)
+                Kalan_Çalışma_Süresi_dk -= Tekrar_Süresi_dk
+                # Tekrar planlandığı için tarihi güncelle
+                Öğrenci.SonTekrarTarihleri[KONU] = BUGÜN 
+                
+    # 4. Programı Günlük Dağılıma Çevir
+    Günlük_Planlar = ProgramıGünlereBöl(PLAN_GÖREVLERİ, Öğrenci.ÇalışmaKapasitesi_MODELİ)
+
+    GERİ DÖN Yeni PROGRAM_PLANI(GünlükGörevler: Günlük_Planlar)
+
+3. Akış Kontrolü (Flow Control)
+
+ANA_UYGULAMA_DÖNGÜSÜ:
+    
+    BAŞLANGIÇ:
+        ÖĞRENCİ_PROFİLİ = ProfiliYükle()
+        HAFTALIK_PROGRAM = HaftalıkProgramOluştur(ÖĞRENCİ_PROFİLİ, YKS_MÜFREDAT)
+        ProgramıKullanıcıyaSun(HAFTALIK_PROGRAM)
+
+
+    HAFTALIK_KONTROL_DÖNGÜSÜ:
+        
+        // Hafta Boyunca Kullanıcı Girdileri Toplanır
+        Kullanıcı_Girişleri = Kaydet_KullanıcıGirişleri() // Tamamlanan görevler ve deneme sonuçları
+
+        EĞER Kullanıcı_Girişleri.YeniDenemeSonucu VAR İSE:
+            // Deneme sonrası hemen profili ve programı güncelle
+            ÖĞRENCİ_PROFİLİ = ProgramıGüncelle_AnalizEt(ÖĞRENCİ_PROFİLİ, Kullanıcı_Girişleri.YeniDenemeSonucu, Kullanıcı_Girişleri.TamamlananGörevler)
+            HAFTALIK_PROGRAM = HaftalıkProgramOluştur(ÖĞRENCİ_PROFİLİ, YKS_MÜFREDAT)
+            ProgramıKullanıcıyaSun(HAFTALIK_PROGRAM)
+        
+        EĞER HAFTA_BİTTİ İSE:
+            // Haftalık uyumu hesapla
+            ÖĞRENCİ_PROFİLİ = ProgramıGüncelle_AnalizEt(ÖĞRENCİ_PROFİLİ, Boş_Deneme_Sonucu, Kullanıcı_Girişleri.HaftalıkTamamlananGörevler)
+            HAFTALIK_PROGRAM = HaftalıkProgramOluştur(ÖĞRENCİ_PROFİLİ, YKS_MÜFREDAT)
+            ProgramıKullanıcıyaSun(HAFTALIK_PROGRAM)
+
+        ProfiliKaydet(ÖĞRENCİ_PROFİLİ)
+
+
